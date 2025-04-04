@@ -1,3 +1,18 @@
+# File: ecs.yaml 
+# This module create all the ECS related items
+#
+# Before executing this, make sure "init.sh" is called which would create all "Parameter Store" values 
+# And also creates an ECR repository 
+# And uploades existing docker image "springdemo" onto ECR 
+# And make sure both the Network and Permissions modules are created 
+#
+# Resource that would be created
+# 1) ECS Cluster 
+# 2) ECS Task Definition  
+# 3) ECS Service 
+# 4) ECS Role 
+# 
+
 Description: "ECS Cluster and springdemo application"
 
 Parameters: 
@@ -22,8 +37,18 @@ Conditions:
     !Equals [ !Ref environment, "dev" ] 
 
 Resources:
+    
+  # Create an ECS Cluster  
+  # Inputs: 
+  #  From Parameter store
+  #  1) Cluster Name  
+  #  
+  #  Other things to consider: 
+  #   1) Make sure to select FARGATE 
+  #   2) Enable Container Insights 
+  #   
   myEcsCluster:                                                                
-    Description: "New Cluster"                        
+    Description: "New ECS Cluster"                        
     Type: AWS::ECS::Cluster
     Properties:                                                                  
      ClusterName: !Sub '{{resolve:ssm:/${environment}/ecs/cluster_name}}'                 
@@ -38,11 +63,23 @@ Resources:
        - Key: Environment
          Value: !Sub ${environment}
 
+  # Create an ECS Task Definition, basically memory configution, cpu config etc   
+  # Inputs: 
+  #  From Parameter store
+  #  1) Take Name 
+  #  2) Docker Image location (repository path)  
+  #  3) ECS Role, which is a reference 
+  # 
+  #  Other things to consider: 
+  #   1) Make sure to select FARGATE 
+  #   2) Enable Container Insights 
+  #   3) Container Port
+  # 
   myEcsTaskDefinition: 
-    Description: "New task definition" 
+    Description: "ECS task definition" 
     Type: AWS::ECS::TaskDefinition
     Properties:                                                                  
-     Family: !Sub '{{resolve:ssm:/${environment}/ecs/task_name}}'                 
+     Family: !Sub '{{resolve:ssm:/${environment}/ecs/task_name}}'
      RequiresCompatibilities: 
        - FARGATE
      ExecutionRoleArn: !Sub ${myECSRole}
@@ -51,9 +88,9 @@ Resources:
      NetworkMode: awsvpc
      ContainerDefinitions: 
        - Name: SpringDemo
-         Image: !Sub '{{resolve:ssm:/${environment}/ecs/ecr_repository}}'                 
+         Image: !Sub '{{resolve:ssm:/${environment}/ecs/ecr_repository}}'
          PortMappings: 
-           - ContainerPort: 8080
+           - ContainerPort: 80
              Protocol: tcp 
 
      Tags:
