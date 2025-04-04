@@ -42,7 +42,7 @@ Resources:
       EnableDnsHostnames: 'true'
       Tags:
        - Key: Name
-         Value: !Join ["- ", [Fn::Sub: "${AWS::StackName}", !Sub '{{resolve:ssm:/${environment}/network/vpc_cidr}}'] ]
+         Value: !Join [" - ", [Fn::Sub: "${AWS::StackName}", !Sub '{{resolve:ssm:/${environment}/network/vpc_cidr}}'] ]
        - Key: Environment
          Value: !Sub ${environment}	
          
