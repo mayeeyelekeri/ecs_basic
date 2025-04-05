@@ -66,7 +66,7 @@ Resources:
   # Create an ECS Task Definition, basically memory configution, cpu config etc   
   # Inputs: 
   #  From Parameter store
-  #  1) Take Name 
+  #  1) Task Name 
   #  2) Docker Image location (repository path)  
   #  3) ECS Role, which is a reference 
   # 
@@ -95,16 +95,31 @@ Resources:
 
      Tags:
        - Key: Name
-         Value: !Join ["-", [Fn::Sub: "${AWS::StackName}", "Task"] ]
+         Value: !Join ["-", [Fn::Sub: "${AWS::StackName} ", "Task"] ]
        - Key: Environment
          Value: !Sub ${environment}
 
+  # Create an ECS Service   
+  # Inputs: 
+  #  From Parameter store
+  #  1) Cluster reference  
+  #  2) Task Definition reference   
+  #  3) ECS Role, which is a reference 
+  #  4) Service Name 
+  # 
+  #  Other things to consider: 
+  #   1) Make sure to select FARGATE 
+  #   2) Assign Public IP is enabled  
+  #   3) Container Port
+  # 
+  #   4) Security Group information from the "permissions" stack
+  #   4) Public Subnet 1 information from the "network" stack 
   myEcsService:
     Type: 'AWS::ECS::Service'
     Properties:
       ServiceName: ecsService 
       Cluster: !Ref myEcsCluster
-      DesiredCount: 1
+      DesiredCount: 2
       LaunchType: FARGATE
       NetworkConfiguration:
         AwsvpcConfiguration:
@@ -118,14 +133,17 @@ Resources:
       TaskDefinition: !Ref myEcsTaskDefinition
       Tags:
        - Key: Name
-         Value: !Join ["-", [Fn::Sub: "${AWS::StackName}", "Service"] ]
+         Value: !Join ["-", [Fn::Sub: "${AWS::StackName} ", "Service"] ]
        - Key: Environment
          Value: !Sub ${environment}
 
+  # 
+  # Create an ECS Role    
+  # 
   myECSRole:
     Type: AWS::IAM::Role
     Properties:
-      RoleName: myecsrole
+      RoleName: myecsrole1
       Path: /
       AssumeRolePolicyDocument:
         Statement:
@@ -151,6 +169,13 @@ Resources:
                       - logs:BatchGetImage
                       - logs:PutLogEvents
                   Resource: "*"
+
+ # Outputs 
+ # 1) ECS Cluster 
+ # 2) Task Definition 
+ # 3) Image Repository Path 
+ # 4) URL to access the application 
+ # 
 Outputs: 
   ECSClusterID: 
     Description: ECS Cluster 
