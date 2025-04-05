@@ -55,7 +55,6 @@ Resources:
         Fn::ImportValue: 
          Fn::Sub: "${networkStackName}-VPCID"
       TargetType: ip 
-      Targets: 10.0.0.0/28        
       Tags:
         - Key: Name
           Value: !Join [" - ", [Fn::Sub: "${AWS::StackName}", "TargetGroup"]]
