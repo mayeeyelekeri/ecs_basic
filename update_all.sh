@@ -1,8 +1,7 @@
 #!/bin/bash 
 
 SECONDS=0
-dirs=(network permissions ecs alb) 
-#dirs=(network permissions alb autoscale codebuild codedeploy codepipeline) 
+dirs=(network permissions alb ecs) 
 
 # Change into each directory and execute update stack script 
 for i in "${dirs[@]}"

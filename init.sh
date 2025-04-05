@@ -16,8 +16,9 @@ sudo /usr/sbin/ntpdate pool.ntp.org
 echo environment is $environment 
 ./network/init.sh $1
 ./permissions/init.sh $1
-./ecs/init.sh $1
 ./alb/init.sh $1
+cd ecs %% ./init.sh $1
+
 
 start=$(date +%s) 
 echo "Elapsed Time: $(($SECONDS / 60)) minutes and $(($SECONDS % 60)) seconds"
