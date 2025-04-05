@@ -17,15 +17,20 @@ Description: "ECS Cluster and springdemo application"
 
 Parameters: 
   networkStackName:
-    Description: Name of the base stack with all network resources
+    Description: Network stack
     Type: String
     Default: nw
 
   permStackName:
-    Description: Name of the base stack with all network resources
+    Description: Permissions stack
     Type: String
     Default: perm
-
+    
+  albStackName:
+    Description: ALB stack 
+    Type: String
+    Default: alb
+    
   environment: 
     Type: String 
     Default: dev 
@@ -130,6 +135,10 @@ Resources:
           Subnets:
             - Fn::ImportValue: 
                Fn::Sub: "${networkStackName}-PUBLIC-SUBNET1"
+      LoadBalancerConfig: 
+        TargetGroupArn: 
+            - Fn::ImportValue: 
+                Fn::Sub: "${albStackName}-TARGET-GROUP"
       TaskDefinition: !Ref myEcsTaskDefinition
       Tags:
        - Key: Name
