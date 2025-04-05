@@ -31,11 +31,11 @@ Parameters:
       - prod 
 
   albName:
-    Description: aldForECS
+    Description: albForECS
     Type: String
     MinLength: 1
     MaxLength: 255
-    Default: aldForECS
+    Default: albForECS
     
 Resources:
   
@@ -62,6 +62,7 @@ Resources:
           Value: !Sub ${environment}
 
   # Create application load balancer and attach the target group 
+  # No need to attach any "targets" at this point, it will be done by ECS service 
   # Inputs: 
   # 1) Security Group (from permissions stack) 
   # 2) Public subnet 1 (from network stack)
@@ -98,7 +99,7 @@ Resources:
 
 # Export the following 2 values 
 # 1) alb : alb-ALB 
-# 2) target group - alb-TARGET_GROUP
+# 2) target group - alb-TARGET_GROUP  (This will be using in ECS Service resource)
 #
 Outputs:
   LoadBalancer:
@@ -106,6 +107,7 @@ Outputs:
     Export:
       "Name" :
         Fn::Sub: "${AWS::StackName}-ALB"
+        
   TargetGroup:
     Value: !Ref targetGroup
     Export:

@@ -37,6 +37,14 @@ Parameters:
     AllowedValues: 
       - dev
 
+  containerName: 
+    Type: String 
+    Default: SpringDemo 
+    
+  serviceName: 
+      Type: String 
+      Default: myEcsService
+        
 Conditions: 
   createOnlyProdResources: 
     !Equals [ !Ref environment, "dev" ] 
@@ -92,7 +100,7 @@ Resources:
      Cpu: 1 vCPU 
      NetworkMode: awsvpc
      ContainerDefinitions: 
-       - Name: SpringDemo
+       - Name: !Sub ${containerName}
          Image: !Sub '{{resolve:ssm:/${environment}/ecs/ecr_repository}}'
          PortMappings: 
            - ContainerPort: 80
@@ -118,11 +126,13 @@ Resources:
   #   3) Container Port
   # 
   #   4) Security Group information from the "permissions" stack
-  #   4) Public Subnet 1 information from the "network" stack 
+  #   5) Public Subnet 1 information from the "network" stack 
+  #   6) ALB Target Group reference from the "alb" stack 
+  # 
   myEcsService:
     Type: 'AWS::ECS::Service'
     Properties:
-      ServiceName: ecsService 
+      ServiceName: !Sub ${serviceName} 
       Cluster: !Ref myEcsCluster
       DesiredCount: 2
       LaunchType: FARGATE
@@ -135,10 +145,17 @@ Resources:
           Subnets:
             - Fn::ImportValue: 
                Fn::Sub: "${networkStackName}-PUBLIC-SUBNET1"
-      LoadBalancerConfig: 
-        TargetGroupArn: 
             - Fn::ImportValue: 
-                Fn::Sub: "${albStackName}-TARGET-GROUP"
+               Fn::Sub: "${networkStackName}-PUBLIC-SUBNET2"
+      LoadBalancers: 
+        - ContainerName: !Sub ${containerName}
+          ContainerPort: 80
+          LoadBalancerName:
+             Ref: "AWS::NoValue"
+          TargetGroupArn:
+             Fn::ImportValue: 
+               Fn::Sub: "${albStackName}-TARGET-GROUP"
+               
       TaskDefinition: !Ref myEcsTaskDefinition
       Tags:
        - Key: Name
