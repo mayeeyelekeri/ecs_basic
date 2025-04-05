@@ -2,7 +2,7 @@
 
 SECONDS=0
 
-dirs=(autoscale alb permissions network)
+dirs=( alb ecs permissions network)
 #dirs=(codepipeline codedeploy codebuild autoscale alb permissions network)
 
 # Change into each directory and execute delete stack script
