@@ -138,15 +138,15 @@ Resources:
       LaunchType: FARGATE
       NetworkConfiguration:
         AwsvpcConfiguration:
-          AssignPublicIp: ENABLED
+          AssignPublicIp: DISABLED
           SecurityGroups:
             - Fn::ImportValue: 
                Fn::Sub: "${permStackName}-PUBLIC-SG"
           Subnets:
             - Fn::ImportValue: 
-               Fn::Sub: "${networkStackName}-PUBLIC-SUBNET1"
+               Fn::Sub: "${networkStackName}-PRIVATE-SUBNET1"
             - Fn::ImportValue: 
-               Fn::Sub: "${networkStackName}-PUBLIC-SUBNET2"
+               Fn::Sub: "${networkStackName}-PRIVATE-SUBNET2"
       LoadBalancers: 
         - ContainerName: !Sub ${containerName}
           ContainerPort: 80
