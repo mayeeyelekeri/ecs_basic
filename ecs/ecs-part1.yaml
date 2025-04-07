@@ -5,12 +5,12 @@
 # 1) ECS Role 
 # 
 
-  Description: "ECS Roles and permissions"
+Description: "ECS Roles and permissions"
 
   # 
   # Create an ECS Role    
   # 
-  Resources: 
+Resources: 
    myECSRole:
     Type: AWS::IAM::Role
     Properties:
@@ -41,10 +41,12 @@
                       - logs:PutLogEvents
                   Resource: "*"
 
- # Outputs 
- # 1) ECS Role
- # 
-  Outputs: 
-   ECSRole: 
-    Description: ECS Role 
-    Value: !Ref myECSRole 
+# Outputs 
+# 1) ECS Role
+# 
+Outputs:
+  ECSRole:
+    Value: !Ref myECSRole
+    Export:
+      "Name" :
+         Fn::Sub: "${AWS::StackName}-ECSRole"

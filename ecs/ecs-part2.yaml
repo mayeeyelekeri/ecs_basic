@@ -34,7 +34,7 @@ Parameters:
   ecsPart1StackName:
     Description: ECS Part1 stack 
     Type: String
-    Default: ecs1
+    Default: ecs-part1
           
   environment: 
     Type: String 
@@ -101,7 +101,7 @@ Resources:
      RequiresCompatibilities: 
        - FARGATE
      ExecutionRoleArn: 
-        - Fn::ImportValue: 
+         Fn::ImportValue: 
              Fn::Sub: "${ecsPart1StackName}-ECSRole"
      Memory: 3 GB
      Cpu: 1 vCPU 
