@@ -43,7 +43,7 @@
  # Outputs 
  # 1) ECS Role
  # 
-Outputs: 
+ Outputs: 
   ECSRole: 
     Description: ECS Role 
     Value: !Ref myECSRole 
