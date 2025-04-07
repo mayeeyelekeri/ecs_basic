@@ -1,4 +1,4 @@
-# File: ecs.yaml 
+# File: ecs-part2.yaml 
 # This module create all the ECS related items
 #
 # Before executing this, make sure "init.sh" is called which would create all "Parameter Store" values 
@@ -30,7 +30,12 @@ Parameters:
     Description: ALB stack 
     Type: String
     Default: alb
-    
+
+  ecsPart1StackName:
+    Description: ECS Part1 stack 
+    Type: String
+    Default: ecs1
+          
   environment: 
     Type: String 
     Default: dev 
@@ -95,7 +100,9 @@ Resources:
      Family: !Sub '{{resolve:ssm:/${environment}/ecs/task_name}}'
      RequiresCompatibilities: 
        - FARGATE
-     ExecutionRoleArn: !Sub ${myECSRole}
+     ExecutionRoleArn: 
+        - Fn::ImportValue: 
+             Fn::Sub: "${ecsPart1StackName}-ECSRole"
      Memory: 3 GB
      Cpu: 1 vCPU 
      NetworkMode: awsvpc
@@ -162,39 +169,6 @@ Resources:
          Value: !Join ["-", [Fn::Sub: "${AWS::StackName} ", "Service"] ]
        - Key: Environment
          Value: !Sub ${environment}
-
-  # 
-  # Create an ECS Role    
-  # 
-  myECSRole:
-    Type: AWS::IAM::Role
-    Properties:
-      RoleName: myecsrole1
-      Path: /
-      AssumeRolePolicyDocument:
-        Statement:
-          - Effect: Allow
-            Principal:
-              Service:
-                - ecs-tasks.amazonaws.com
-            Action:
-              - sts:AssumeRole
-
-      Policies:
-        - PolicyName: "ECSFullAccessForMe"
-          PolicyDocument:
-            Version: "2012-10-17"
-            Statement:
-                -
-                  Effect: "Allow"
-                  Action:
-                      - ecr:GetAuthorizationToken
-                      - ecr:BatchCheckLayerAvailability
-                      - ecr:GetDownloadUrlForLayer
-                      - ecr:BatchGetImage
-                      - logs:BatchGetImage
-                      - logs:PutLogEvents
-                  Resource: "*"
 
  # Outputs 
  # 1) ECS Cluster 
