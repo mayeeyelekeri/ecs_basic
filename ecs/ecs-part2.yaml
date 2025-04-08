@@ -112,6 +112,11 @@ Resources:
          PortMappings: 
            - ContainerPort: 80
              Protocol: tcp 
+         Environment: 
+            - Name: WELCOME_MESSAGE
+              Value: "this is message from the stack"
+            - Name: IP_ADDRESS
+              Value: "10.0.0.0"
 
      Tags:
        - Key: Name
