@@ -141,7 +141,7 @@ Resources:
     Properties:
       ServiceName: !Sub ${serviceName} 
       Cluster: !Ref myEcsCluster
-      DesiredCount: 1
+      DesiredCount: 2
       LaunchType: FARGATE
       NetworkConfiguration:
         AwsvpcConfiguration:
